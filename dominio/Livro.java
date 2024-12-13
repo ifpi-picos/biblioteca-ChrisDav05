@@ -8,12 +8,8 @@ public class Livro {
     private String titulo;
     private String editora;
     private int ano;
-    private Boolean emprestado;
-    private List<Livro> livros = new ArrayList<>();
+    private Boolean emprestado = false;
 
-    public List<Livro> getLivros() {
-        return livros;
-      }
     public String getAutor(){
         return autor;
     }
@@ -43,6 +39,16 @@ public class Livro {
     }
     public void setEmprestado(Boolean emprestado){
         this.emprestado = false;
+    }
+    @Override
+    public String toString() {
+        return "\nLivro" +
+                "\n{Titulo: " + titulo+
+                "\nAutor: " + autor +
+                "\nEditora: " + editora +
+                "\nAno: " + ano +
+                "\nEmprestado: " + emprestado +
+                '}';
     }
 }
 
