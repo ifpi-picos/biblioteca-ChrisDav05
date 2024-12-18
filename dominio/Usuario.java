@@ -5,13 +5,13 @@ public class Usuario {
     private String cpf;
     private String email;
 
-    public String get_nome(){
+    public String getNome(){
         return nome;
     }
-    public String get_cpf(){
+    public String getCpf(){
         return cpf;
     }
-    public String get_email(){
+    public String getEmail(){
         return email;
     }
 }

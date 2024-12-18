@@ -1,17 +1,26 @@
 package dominio;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Livro {
     private String autor;
     private String titulo;
     private String editora;
     private int ano;
+    private String ISBN;
     private Boolean emprestado = false;
 
+    public Livro(String autor, String titulo, String editora, int ano, Boolean emprestado, String ISBN) {
+        this.autor = autor;
+        this.titulo = titulo;
+        this.editora = editora;
+        this.ano = ano;
+        this.emprestado = emprestado;
+        this.ISBN = ISBN;
+    }
     public String getAutor(){
         return autor;
+    }
+    public String getISBN(){
+        return ISBN;
     }
     public void setAutor(String autor){
         this.autor = autor;
@@ -39,16 +48,6 @@ public class Livro {
     }
     public void setEmprestado(Boolean emprestado){
         this.emprestado = false;
-    }
-    @Override
-    public String toString() {
-        return "\nLivro" +
-                "\n{Titulo: " + titulo+
-                "\nAutor: " + autor +
-                "\nEditora: " + editora +
-                "\nAno: " + ano +
-                "\nEmprestado: " + emprestado +
-                '}';
     }
 }
 
