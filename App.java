@@ -23,14 +23,10 @@ public class App {
             obj.Cadastrar();
         } else if (escolha == 2){
             obj.listarLivros();
-        // } else if (escolha == 3){
-        //     System.out.println("Digite o ISBN do livro que deseja tomar como emprestado:\n");
-        //     String ISBN = scanner.nextLine();
-        //     if (ISBN == ){
-        //         livros.remove(1);
-        //         System.out.println("Livro emprestado!" + livrosEmprestados.add());
-        //     }
+        } else if (escolha == 3){
+            obj.emprestar();
+            }
         }
         }
 }
-}
+
