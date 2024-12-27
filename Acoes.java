@@ -65,7 +65,6 @@ public class Acoes {
         String cpf = scanner.nextLine(); 
         System.out.println("Digite o seu email:");
         String email = scanner.nextLine();
-
         Usuario usuario = new Usuario(nome, cpf, email);
 
         usuarios.add(usuario);
@@ -111,7 +110,11 @@ public class Acoes {
             livrosEmprestados.add(livroEncontrado);
             livros.remove(livroEncontrado);
             livroEncontrado.setEmprestado(true);
+            usuarioEncontrado.incrementarEmprestimos();
+            int contagemEmprestimos = usuarioEncontrado.getContadorEmprestimos();
             System.out.println("Livro emprestado com sucesso!");
+            System.out.println("O usuário " + usuarioEncontrado.getNome() + " já pegou o livro com ISBN " + isbn +
+                " " + contagemEmprestimos + " vez(es).");
         } else {
             System.out.println("ISBN fornecido é invalido.");
         }
@@ -171,4 +174,27 @@ public class Acoes {
                 System.out.println("---------------------------");
             }
     }
+    public void ListarHistoricoEmp(){
+        System.out.println("Digite o nome do usuario que deseja ver o histórico de empréstimos:");
+        String nomeUsuario = scanner.nextLine();
+        Usuario usuarioEncontrado = null;
+        for (Usuario usuario : usuarios) {
+        if (nomeUsuario.equals(usuario.getNome())) {
+            usuarioEncontrado = usuario;
+            break;
+        }
+    }
+        if(usuarioEncontrado!= null){
+            System.out.println("Usuario encontrado!");
+            for (Emprestimo emprestimo : emprestimos) {
+                if (emprestimo.getUsuario().equals(usuarioEncontrado)) {
+                    System.out.println("Livro: " + emprestimo.getLivro().getTitulo() +
+                            " - Data de empréstimo: " + emprestimo.getDataEmprestimo() +
+                            " - Data de devolução: " + emprestimo.getDataDevolucao());
+                }
+            }
+        } else {
+            System.out.println("Usuario não encontrado.");
+        }
+}
 }

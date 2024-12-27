@@ -13,7 +13,7 @@ public class App {
         
         while (true) {
         System.out.println("\nBIBLIOTECA UM BOOKADO DE LIVRO");
-        System.out.println("\n0 - Cadastrar livro\n1 - Listar todos os livros\n2 - Cadastrar usuário\n3 - Pegar livro emprestado\n4 - Devolver livro\n5 - Listar livros emprestados e disponíveis\n6 - Listar histórico de empréstimos do usuário\n7 - Sair");
+        System.out.println("\n0 - Cadastrar livro\n1 - Listar todos os livros\n2 - Cadastrar usuário\n3 - Pegar livro emprestado\n4 - Devolver livro\n5 - Listar livros emprestados e disponíveis\n6 - Sair");
         System.out.print("\nDigite uma opção:");
         int escolha = scanner.nextInt();    
         scanner.nextLine();
@@ -37,6 +37,9 @@ public class App {
             } else if (opcao == 2){
                 obj.ListarLivrosEmp();
             }
+        } else if(escolha == 6){
+            System.out.println("OBRIGADO POR USAR O SISTEMA.");
+            break;    
         }
         }
         }
