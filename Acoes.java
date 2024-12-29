@@ -30,7 +30,7 @@ public class Acoes {
             ano = scanner.nextInt(); 
         }
           scanner.nextLine();
-          System.out.println("Digite o ISBN do livro:");
+          System.out.println("Digite o ISBN do livro no formato XXXX-XXXX:");
           String ISBN = scanner.nextLine();
           
           Livro livro = new Livro(autor, titulo, editora, ano, false, ISBN);
@@ -61,9 +61,9 @@ public class Acoes {
     public void CadUsuario(){
         System.out.println("\nDigite o seu nome:");
         String nome = scanner.nextLine();
-        System.out.println("Digite o seu cpf:");
+        System.out.println("Digite o seu cpf no formato xxx.xxx.xxx-xx:");
         String cpf = scanner.nextLine(); 
-        System.out.println("Digite o seu email:");
+        System.out.println("Digite o seu email no formato username@gmail.com:");
         String email = scanner.nextLine();
         Usuario usuario = new Usuario(nome, cpf, email);
 
@@ -124,6 +124,8 @@ public class Acoes {
         }
     }
     public void Devolver (){
+        System.out.println("Livros emprestados: ");
+        ListarLivrosEmp();
         System.out.println("Digite o ISBN do livro que deseja devolver: ");
         String isbn = scanner.nextLine();
         Emprestimo emprestimoEncontrado = null;
@@ -174,27 +176,4 @@ public class Acoes {
                 System.out.println("---------------------------");
             }
     }
-    public void ListarHistoricoEmp(){
-        System.out.println("Digite o nome do usuario que deseja ver o histórico de empréstimos:");
-        String nomeUsuario = scanner.nextLine();
-        Usuario usuarioEncontrado = null;
-        for (Usuario usuario : usuarios) {
-        if (nomeUsuario.equals(usuario.getNome())) {
-            usuarioEncontrado = usuario;
-            break;
-        }
-    }
-        if(usuarioEncontrado!= null){
-            System.out.println("Usuario encontrado!");
-            for (Emprestimo emprestimo : emprestimos) {
-                if (emprestimo.getUsuario().equals(usuarioEncontrado)) {
-                    System.out.println("Livro: " + emprestimo.getLivro().getTitulo() +
-                            " - Data de empréstimo: " + emprestimo.getDataEmprestimo() +
-                            " - Data de devolução: " + emprestimo.getDataDevolucao());
-                }
-            }
-        } else {
-            System.out.println("Usuario não encontrado.");
-        }
-}
 }

@@ -29,7 +29,7 @@ public class App {
         } else if (escolha == 4){
             obj.Devolver();
         } else if (escolha == 5){
-            System.out.print("\nDigite uma opção:\n1 - Listar livros disponiveis\n2 - Listar livros emprestados");
+            System.out.print("\nDigite uma opção:\n1 - Listar livros disponiveis\n2 - Listar livros emprestados\nDigite a opção: ");
             int opcao = scanner.nextInt();    
             scanner.nextLine();
             if (opcao == 1){
