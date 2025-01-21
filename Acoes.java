@@ -46,6 +46,7 @@ public class Acoes {
           System.out.println("O ISBN do livro é: " + livro.getISBN());
           
     }
+    
     public void ListarLivros(){
         System.out.println("\nLivros cadastrados na biblioteca:");
             for (Livro livro : livros) {
@@ -58,6 +59,7 @@ public class Acoes {
                 System.out.println("---------------------------");
             }
     }
+
     public void CadUsuario(){
         System.out.println("\nDigite o seu nome:");
         String nome = scanner.nextLine();
@@ -74,6 +76,7 @@ public class Acoes {
         System.out.println("CPF: " + usuario.getCpf());
         System.out.println("Email: " + usuario.getEmail());
     }
+
     public void Emprestar(){
         System.out.println("Lista dos livros da biblioteca");
         ListarLivros();
@@ -115,6 +118,8 @@ public class Acoes {
             System.out.println("Livro emprestado com sucesso!");
             System.out.println("O usuário " + usuarioEncontrado.getNome() + " já pegou o livro com ISBN " + isbn +
                 " " + contagemEmprestimos + " vez(es).");
+            InterNotificaçao notificaçao = new NotificarEmprestimo();
+            notificaçao.Notificar(usuarioEncontrado);
         } else {
             System.out.println("ISBN fornecido é invalido.");
         }
@@ -123,6 +128,7 @@ public class Acoes {
             System.out.println("Livro "+emprestimo.getLivro().getTitulo() + " está emprestado para " + emprestimo.getUsuario().getNome() + ".\nData de empréstimo: "+ emprestimo.getDataEmprestimo()+".\nData de devolução: "+ emprestimo.getDataDevolucao()+".");
         }
     }
+
     public void Devolver (){
         System.out.println("Livros emprestados: ");
         ListarLivrosEmp();
@@ -153,6 +159,7 @@ public class Acoes {
             System.out.println("Nenhum empréstimo encontrado para o ISBN fornecido.");
         }
     }
+
     public void ListarLivrosDisp(){
         System.out.println("\nLivros disponíveis:");
             for (Livro livro : livros) {
@@ -165,6 +172,7 @@ public class Acoes {
                 System.out.println("---------------------------");
             }
     }
+
     public void ListarLivrosEmp(){
         System.out.println("\nLivros emprestados:");
             for (Livro livrosEmprestados : livrosEmprestados) {
