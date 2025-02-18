@@ -40,7 +40,7 @@ public class Acoes {
     }
     
     public void ListarLivros(){
-        List <Livro> livros = LivroDAO.listarLivros();
+        List <Livro> livros = livroDAO.listarLivros();
         System.out.println("\nLivros cadastrados na biblioteca:");
             for (Livro livro : livros) {
                 System.out.println("\nAutor: " + livro.getAutor());
@@ -61,7 +61,7 @@ public class Acoes {
         System.out.println("Digite o seu email no formato username@gmail.com:");
         String email = scanner.nextLine();
         Usuario usuario = new Usuario(nome, cpf, email);
-        UsuarioDAO.cadastrarUsuario(usuario);
+        usuarioDAO.cadastrarUsuario(usuario);
         
         System.out.println("\nUsuario cadastrado na biblioteca!");
         System.out.println("\nNome: " + usuario.getNome());
@@ -73,21 +73,21 @@ public class Acoes {
         System.out.println("Lista dos livros da biblioteca");
         System.out.println("\nDigite o título do livro que deseja tomar como emprestado:");
         String livroTitulo = scanner.nextLine();
-        int livro_id = LivroDAO.buscaIdPorTitulo(livroTitulo);
+        int livro_id = livroDAO.buscaIdPorTitulo(livroTitulo);
 
         System.out.println("Digite o nome do usuario que quer tomar emprestado um livro:");
         String usuarioNome = scanner.nextLine();
-        int usuario_id = UsuarioDAO.buscaIdPorNome(usuarioNome);
+        int usuario_id = usuarioDAO.buscaIdPorNome(usuarioNome);
 
         Usuario usuarioEncontrado = null;
-        for (Usuario usuario : UsuarioDAO.listarUsuarios()) {
+        for (Usuario usuario : usuarioDAO.listarUsuarios()) {
         if (usuario_id == usuario.getIDUsuario()) {
             usuarioEncontrado = usuario;
             break;
         }
     }
         Livro livroEncontrado = null;
-        for (Livro livro : LivroDAO.listarLivros()) {
+        for (Livro livro : livroDAO.listarLivros()) {
         if (livro_id == livro.getIDLivro()) {
             livroEncontrado = livro;
             break;
@@ -96,8 +96,8 @@ public class Acoes {
         LocalDate dataEmprestimo = LocalDate.now();
         LocalDate dataDevolucao = dataEmprestimo.plusDays(7);
         if(livroEncontrado!= null){
-            int idEncontrado = LivroDAO.buscaIdPorTitulo(livroTitulo);
-            EmprestimoDAO.atualizarStatus(true, idEncontrado);
+            int idEncontrado = livroDAO.buscaIdPorTitulo(livroTitulo);
+            emprestimoDAO.atualizarStatus(true, idEncontrado);
             InterNotificaçao notificaçao = new NotificarEmprestimo();
             notificaçao.Notificar(usuarioEncontrado);
         }
@@ -115,7 +115,7 @@ public class Acoes {
 
     Emprestimo emprestimoEncontrado = null;
     
-    for (Emprestimo emprestimo : EmprestimoDAO.listarEmprestimos()) {
+    for (Emprestimo emprestimo : emprestimoDAO.listarEmprestimos()) {
         if (idUsuario == emprestimo.getIDUsuario()) {  
             emprestimoEncontrado = emprestimo;
             break;
@@ -132,7 +132,7 @@ public class Acoes {
 
     boolean encontrouLivro = false;
 
-    for (Emprestimo emprestimo : EmprestimoDAO.listarEmprestimos()) {
+    for (Emprestimo emprestimo : emprestimoDAO.listarEmprestimos()) {
         if (idUsuario == emprestimo.getIDUsuario() && idDevolve == emprestimo.getIDLivro()) {
             encontrouLivro = true;
             break;
@@ -145,7 +145,7 @@ public class Acoes {
     }
 
     try {
-        EmprestimoDAO.devolverLivro(idDevolve, "Devolvido");
+        emprestimoDAO.devolverLivro(idDevolve, "Devolvido");
         System.out.println("Livro devolvido com sucesso!");
     } catch (SQLException e) {
         System.out.println("Erro ao devolver o livro.");
@@ -153,28 +153,27 @@ public class Acoes {
     }
     }
 
-    public void ListarLivrosDisp(){
+    public void ListarLivrosDisponiveis(){
         System.out.println("\nLivros disponíveis:");
-            for (Livro livro : livroDAO.listarLivros()) {
+            for (Livro livro : livroDAO.listarLivrosDisponiveis()) {
                 System.out.println("\nAutor: " + livro.getAutor());
                 System.out.println("Título: " + livro.getTitulo());
                 System.out.println("Editora: " + livro.getEditora());
                 System.out.println("Ano: " + livro.getAno());
                 System.out.println("Emprestado: " + livro.getEmprestado());
                 System.out.println("ISBN: " + livro.getISBN());
-                System.out.println("---------------------------");
             }
     }
 
-    // public void ListarLivrosEmp(){
-    //     System.out.println("\nLivros emprestados:");
-    //         for (Livro livrosEmprestados : livrosEmprestados) {
-    //             System.out.println("\nAutor: " + livrosEmprestados.getAutor());
-    //             System.out.println("Título: " + livrosEmprestados.getTitulo());
-    //             System.out.println("Editora: " + livrosEmprestados.getEditora());
-    //             System.out.println("Ano: " + livrosEmprestados.getAno());
-    //             System.out.println("ISBN: " + livrosEmprestados.getISBN());
-    //             System.out.println("---------------------------");
-    //         }
-    // }
+    public void ListarLivrosEmprestados(){
+        System.out.println("\nLivros emprestados:");
+            for (Livro livrosEmprestados : livroDAO.listarLivrosEmprestados()) {
+                System.out.println("\nAutor: " + livrosEmprestados.getAutor());
+                System.out.println("Título: " + livrosEmprestados.getTitulo());
+                System.out.println("Editora: " + livrosEmprestados.getEditora());
+                System.out.println("Ano: " + livrosEmprestados.getAno());
+                System.out.println("Emprestado: " + livrosEmprestados.getEmprestado());
+                System.out.println("ISBN: " + livrosEmprestados.getISBN());
+            }
+    }
 }

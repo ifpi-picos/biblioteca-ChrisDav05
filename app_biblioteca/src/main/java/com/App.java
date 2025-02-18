@@ -1,7 +1,5 @@
 package com;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class App {
@@ -31,9 +29,9 @@ public class App {
             int opcao = scanner.nextInt();    
             scanner.nextLine();
             if (opcao == 1){
-                obj.ListarLivrosDisp();
-            // } else if (opcao == 2){
-            //     obj.ListarLivrosEmp();
+                obj.ListarLivrosDisponiveis();
+            } else if (opcao == 2){
+                obj.ListarLivrosEmprestados();
             }
         } else if(escolha == 6){
             System.out.println("OBRIGADO POR USAR O SISTEMA.");
@@ -41,5 +39,6 @@ public class App {
         }
         }
         }
+        
 }
 

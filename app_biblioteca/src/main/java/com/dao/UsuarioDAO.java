@@ -10,27 +10,32 @@ import java.util.List;
 import com.Usuario;
 import com.example.ConexaoBanco;
 
-public class UsuarioDAO{
-    public static void cadastrarUsuario(Usuario usuario){
+public class UsuarioDAO {
+    private Connection conexao;
+
+    public UsuarioDAO() {
+        this.conexao = ConexaoBanco.obterConexao();
+    }
+
+    public void cadastrarUsuario(Usuario usuario) {
         String sql = "INSERT INTO usuario (Cpf, Nome, Email) VALUES (?, ?, ?)";
 
-        try (Connection conexao = ConexaoBanco.obterConexao();
-             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setString(1, usuario.getCpf());
             stmt.setString(2, usuario.getNome());
             stmt.setString(3, usuario.getEmail());
             stmt.executeUpdate();
-            System.out.println("Livro cadastrado na biblioteca!");
+            System.out.println("Usuário cadastrado com sucesso!");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    public static List<Usuario> listarUsuarios() {
+
+    public List<Usuario> listarUsuarios() {
         List<Usuario> usuarios = new ArrayList<>();
         String sql = "SELECT * FROM usuario";
 
-        try (Connection conexao = ConexaoBanco.obterConexao();
-             PreparedStatement stmt = conexao.prepareStatement(sql);
+        try (PreparedStatement stmt = conexao.prepareStatement(sql);
              ResultSet usuarioBD = stmt.executeQuery()) {
 
             while (usuarioBD.next()) {
@@ -46,22 +51,31 @@ public class UsuarioDAO{
         }
         return usuarios;
     }
-    
-    public static int buscaIdPorNome(String Nome){
+
+    public int buscaIdPorNome(String nome) {
         String sql = "SELECT id FROM usuario WHERE nome = ?";
 
-        try (Connection conexao = ConexaoBanco.obterConexao();
-             PreparedStatement stmt = conexao.prepareStatement(sql)){
-                stmt.setString(1, Nome);
-                ResultSet rs = stmt.executeQuery();
-        
-        if(rs.next()){
-            return rs.getInt("id");
-        }        
-        }catch (SQLException e) {
-            throw new RuntimeException("Erro ao busca usuário: " + e.getMessage());
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            stmt.setString(1, nome);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar usuário: " + e.getMessage());
         }
         return -1;
-             
-}
+    }
+    
+    public void fecharConexao() {
+        try {
+            if (conexao != null && !conexao.isClosed()) {
+                conexao.close();
+                System.out.println("Conexão fechada.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -14,23 +14,24 @@ import com.Livro;
 import com.example.ConexaoBanco;
 
 public class EmprestimoDAO {
-    LivroDAO livroDAO = new LivroDAO();
-    UsuarioDAO usuarioDAO = new UsuarioDAO();
-    
+    private Connection conexao;
+    private LivroDAO livroDAO;
+    private UsuarioDAO usuarioDAO;
 
+    public EmprestimoDAO() {
+        this.conexao = ConexaoBanco.obterConexao();
+        this.livroDAO = new LivroDAO();
+        this.usuarioDAO = new UsuarioDAO();
+    }
 
-public void adicionarEmprestimo(int livro_id, int usuario_id, LocalDate data_emprestimo, LocalDate data_devolucao, String emprestado_status) throws SQLException{
-
-    String sql = "INSERT INTO emprestimos (livro_id, usuario_id, data_emprestimo, data_devolucao, emprestado_status) VALUES (?, ?, ?, ?, ?)";
-    try (Connection conexao = ConexaoBanco.obterConexao();
-             PreparedStatement stmt = conexao.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-
+    public void adicionarEmprestimo(int livro_id, int usuario_id, LocalDate data_emprestimo, LocalDate data_devolucao, String emprestado_status) throws SQLException {
+        String sql = "INSERT INTO emprestimos (livro_id, usuario_id, data_emprestimo, data_devolucao, emprestado_status) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = conexao.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, livro_id);
             stmt.setInt(2, usuario_id);
             stmt.setDate(3, Date.valueOf(data_emprestimo));
             stmt.setDate(4, Date.valueOf(data_devolucao));
             stmt.setString(5, emprestado_status);
-
 
             int linhasAfetadas = stmt.executeUpdate();
             if (linhasAfetadas > 0) {
@@ -41,31 +42,29 @@ public void adicionarEmprestimo(int livro_id, int usuario_id, LocalDate data_emp
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
-public static void atualizarStatus(Boolean emprestado,int livro_id){
-        String sql = "UPDATE livro SET emprestado = ? WHERE id = ?";
 
-        try (Connection conexao = ConexaoBanco.obterConexao(); 
-            PreparedStatement stmt = conexao.prepareStatement(sql)){
+    public void atualizarStatus(boolean emprestado, int livro_id) {
+        String sql = "UPDATE livro SET emprestado = ? WHERE id = ?";
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setBoolean(1, emprestado);
             stmt.setInt(2, livro_id);
             int linhasAfetadas = stmt.executeUpdate();
-        if(linhasAfetadas > 0){
-            System.out.println("Status do livro alterado!");
-        }else{
-            System.out.println("Erro ao atualizar status.");
-        }
+            if (linhasAfetadas > 0) {
+                System.out.println("Status do livro alterado!");
+            } else {
+                System.out.println("Erro ao atualizar status.");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-public static List<Emprestimo> listarEmprestimos(){
+
+    public List<Emprestimo> listarEmprestimos() {
         List<Emprestimo> emprestimos = new ArrayList<>();
         String sql = "SELECT * FROM emprestimos";
 
-        try (Connection conexao = ConexaoBanco.obterConexao();
-             PreparedStatement stmt = conexao.prepareStatement(sql);
+        try (PreparedStatement stmt = conexao.prepareStatement(sql);
              ResultSet emprestimoBD = stmt.executeQuery()) {
 
             while (emprestimoBD.next()) {
@@ -82,21 +81,31 @@ public static List<Emprestimo> listarEmprestimos(){
         }
         return emprestimos;
     }
-public static void devolverLivro(int livro_id, String status) throws SQLException{
 
-    String sql = "UPDATE emprestimos SET emprestado_status = ? WHERE livro_id = ?";
-    try (Connection conexao = ConexaoBanco.obterConexao();
-        PreparedStatement stmt = conexao.prepareStatement(sql)){
-        stmt.setString(1, status);
-        stmt.setInt(2, livro_id);
-        int linhasAfetadas = stmt.executeUpdate();
-    if(linhasAfetadas > 0){
-        System.out.println("Status alterado!");
-    }else{
-        System.out.println("Erro ao alterar status.");
+    public void devolverLivro(int livro_id, String status)throws SQLException {
+        String sql = "UPDATE emprestimos SET emprestado_status = ? WHERE livro_id = ?";
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            stmt.setString(1, status);
+            stmt.setInt(2, livro_id);
+            int linhasAfetadas = stmt.executeUpdate();
+            if (linhasAfetadas > 0) {
+                System.out.println("Status alterado!");
+            } else {
+                System.out.println("Erro ao alterar status.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
-    } catch (SQLException e) {
-        e.printStackTrace();
+
+    public void fecharConexao() {
+        try {
+            if (conexao != null && !conexao.isClosed()) {
+                conexao.close();
+                System.out.println("Conexão fechada.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
-}
 }
