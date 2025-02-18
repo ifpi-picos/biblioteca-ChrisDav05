@@ -3,23 +3,27 @@ package com;
 import java.time.LocalDate;
 
 public class Emprestimo {
+    private int emprestimo_id;
     private int livro_id;
     private int usuario_id;
     private LocalDate dataEmprestimo;
-    private Boolean emprestadoStatus;    
+    private String status;    
 
-    public Emprestimo(int livro_id, int usuario_id, LocalDate dataEmprestimo, Boolean emprestadoStatus) {
+    public Emprestimo(int livro_id, int usuario_id, LocalDate dataEmprestimo, String status) {
         this.livro_id = livro_id;
         this.usuario_id = usuario_id;
         this.dataEmprestimo =  dataEmprestimo;
-        this.emprestadoStatus = emprestadoStatus;
+        this.status = status;
 
     }
-    public Boolean getEmprestadoStatus(){
-        return emprestadoStatus;
+    public int getIDEmprestimo(){
+        return emprestimo_id;
     }
-    public void setEmprestadoStatus(Boolean emprestadoStatus){
-        this.emprestadoStatus = emprestadoStatus;
+    public String getStatus(){
+        return status;
+    }
+    public void setStatus(String status){
+        this.status = status;
     }
     public int getIDLivro() {
         return livro_id;

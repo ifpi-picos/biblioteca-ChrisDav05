@@ -9,7 +9,7 @@ public class Livro {
     private String ISBN;
     private Boolean emprestado;
 
-    public Livro( String autor, String titulo, String editora, int ano, Boolean emprestado, String ISBN) {
+    public Livro(String autor, String titulo, String editora, int ano, Boolean emprestado, String ISBN) {
         this.autor = autor;
         this.titulo = titulo;
         this.editora = editora;

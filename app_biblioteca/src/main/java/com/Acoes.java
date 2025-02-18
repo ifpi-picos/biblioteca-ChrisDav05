@@ -1,7 +1,6 @@
 package com;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -96,49 +95,62 @@ public class Acoes {
     }
         LocalDate dataEmprestimo = LocalDate.now();
         LocalDate dataDevolucao = dataEmprestimo.plusDays(7);
-
         if(livroEncontrado!= null){
             int idEncontrado = LivroDAO.buscaIdPorTitulo(livroTitulo);
-            EmprestimoDAO.atualizarStatus(idEncontrado, true);
-            System.out.println("Livro emprestado com sucesso!");
-            System.out.println("O usuário " + usuarioEncontrado.getNome() + " pegou o livro com ID " +  livro_id);
+            EmprestimoDAO.atualizarStatus(true, idEncontrado);
             InterNotificaçao notificaçao = new NotificarEmprestimo();
             notificaçao.Notificar(usuarioEncontrado);
         }
         try {
-            emprestimoDAO.adicionarEmprestimo(livro_id, usuario_id, dataEmprestimo,dataDevolucao);
+            emprestimoDAO.adicionarEmprestimo(livro_id, usuario_id, dataEmprestimo,dataDevolucao, "emprestado");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public void Devolver (){
-        System.out.println("Digite o ID do livro que deseja devolver: ");
-        int idDevolve = scanner.nextInt();
-        Emprestimo emprestimoEncontrado = null;
-        for (Emprestimo emprestimo : emprestimos) {
-        if (emprestimo.getLivro().getISBN().equals(isbn)) {
+    
+    System.out.println("Digite seu ID de usuário:");
+    int idUsuario = scanner.nextInt();
+
+    Emprestimo emprestimoEncontrado = null;
+    
+    for (Emprestimo emprestimo : EmprestimoDAO.listarEmprestimos()) {
+        if (idUsuario == emprestimo.getIDUsuario()) {  
             emprestimoEncontrado = emprestimo;
             break;
         }
     }
-        if(emprestimoEncontrado != null){
-            LocalDate dataAtual = LocalDate.now();
-            Livro livro = emprestimoEncontrado.getLivro();
 
-            if (dataAtual.isAfter(emprestimoEncontrado.getDataDevolucao())) {
-            long diasAtraso = ChronoUnit.DAYS.between(emprestimoEncontrado.getDataDevolucao(), dataAtual);
-            System.out.println("Livro devolvido com atraso de " + diasAtraso + " dias.");
-        } else {
-            System.out.println("Livro devolvido no prazo. Obrigado!");
+    if (emprestimoEncontrado == null) {
+        System.out.println("Nenhum empréstimo encontrado para este usuário.");
+        return;
+    }
+    
+    System.out.println("Digite o ID do livro que deseja devolver: ");
+    int idDevolve = scanner.nextInt();
+
+    boolean encontrouLivro = false;
+
+    for (Emprestimo emprestimo : EmprestimoDAO.listarEmprestimos()) {
+        if (idUsuario == emprestimo.getIDUsuario() && idDevolve == emprestimo.getIDLivro()) {
+            encontrouLivro = true;
+            break;
         }
-        livro.setEmprestado(false);
-        //livroDAO.add(livro);
-        livrosEmprestados.remove(livro);
-        emprestimos.remove(emprestimoEncontrado);
-        } else {
-            System.out.println("Nenhum empréstimo encontrado para o ISBN fornecido.");
-        }
+    }
+
+    if (!encontrouLivro) {
+        System.out.println("Este livro não pertence a um empréstimo seu.");
+        return;
+    }
+
+    try {
+        EmprestimoDAO.devolverLivro(idDevolve, "Devolvido");
+        System.out.println("Livro devolvido com sucesso!");
+    } catch (SQLException e) {
+        System.out.println("Erro ao devolver o livro.");
+        e.printStackTrace();
+    }
     }
 
     public void ListarLivrosDisp(){
@@ -154,15 +166,15 @@ public class Acoes {
             }
     }
 
-    public void ListarLivrosEmp(){
-        System.out.println("\nLivros emprestados:");
-            for (Livro livrosEmprestados : livrosEmprestados) {
-                System.out.println("\nAutor: " + livrosEmprestados.getAutor());
-                System.out.println("Título: " + livrosEmprestados.getTitulo());
-                System.out.println("Editora: " + livrosEmprestados.getEditora());
-                System.out.println("Ano: " + livrosEmprestados.getAno());
-                System.out.println("ISBN: " + livrosEmprestados.getISBN());
-                System.out.println("---------------------------");
-            }
-    }
+    // public void ListarLivrosEmp(){
+    //     System.out.println("\nLivros emprestados:");
+    //         for (Livro livrosEmprestados : livrosEmprestados) {
+    //             System.out.println("\nAutor: " + livrosEmprestados.getAutor());
+    //             System.out.println("Título: " + livrosEmprestados.getTitulo());
+    //             System.out.println("Editora: " + livrosEmprestados.getEditora());
+    //             System.out.println("Ano: " + livrosEmprestados.getAno());
+    //             System.out.println("ISBN: " + livrosEmprestados.getISBN());
+    //             System.out.println("---------------------------");
+    //         }
+    // }
 }
