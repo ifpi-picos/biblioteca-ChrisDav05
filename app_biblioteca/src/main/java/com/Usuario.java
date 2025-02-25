@@ -1,11 +1,12 @@
 package com;
 
 public class Usuario {
-    private int usuario_id;
+    private Integer usuario_id;
     private String nome;
     private String cpf;
     private String email;
     private int contadorEmprestimos;
+
 
     public Usuario(String nome, String cpf, String email) {
         this.nome = nome;
@@ -13,10 +14,17 @@ public class Usuario {
         this.email = email;
         this.contadorEmprestimos = 0;
     }
-    public int getIDUsuario(){
+    public Usuario(Integer usuario_id, String nome, String cpf, String email) {
+        this.usuario_id = usuario_id;
+        this.nome = nome;
+        this.cpf = cpf;
+        this.email = email;
+    }
+
+    public Integer getIDUsuario(){
         return usuario_id;
     }
-    public void setIDUsuario(int usuario_id){
+    public void setIDUsuario(Integer usuario_id){
         this.usuario_id = usuario_id;
     }
     public String getNome(){

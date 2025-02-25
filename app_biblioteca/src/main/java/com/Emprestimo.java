@@ -4,15 +4,17 @@ import java.time.LocalDate;
 
 public class Emprestimo {
     private int emprestimo_id;
-    private int livro_id;
-    private int usuario_id;
+    private Livro livro;
+    private Usuario usuario;
     private LocalDate dataEmprestimo;
+    private LocalDate dataDevolucao;
     private String status;    
 
-    public Emprestimo(int livro_id, int usuario_id, LocalDate dataEmprestimo, String status) {
-        this.livro_id = livro_id;
-        this.usuario_id = usuario_id;
-        this.dataEmprestimo =  dataEmprestimo;
+    public Emprestimo(Livro livro, Usuario usuario, LocalDate dataEmprestimo, LocalDate dataDevolucao, String status) {
+        this.livro = livro;
+        this.usuario = usuario;
+        this.dataEmprestimo = dataEmprestimo;
+        this.dataDevolucao = dataEmprestimo.plusDays(7);
         this.status = status;
 
     }
@@ -25,16 +27,17 @@ public class Emprestimo {
     public void setStatus(String status){
         this.status = status;
     }
-    public int getIDLivro() {
-        return livro_id;
+    public Livro getLivro() {
+        return livro;
     }
-
-    public int getIDUsuario() {
-        return usuario_id;
+    public Usuario getUsuario() {
+        return usuario;
     }
-
     public LocalDate getDataEmprestimo(){
         return dataEmprestimo;
+    }
+    public LocalDate getDataDevolucao(){
+        return dataDevolucao;
     }
 }
 

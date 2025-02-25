@@ -17,21 +17,34 @@ public class LivroDAO {
         this.conexao = ConexaoBanco.obterConexao();
     }
 
-    public void adicionarLivro(Livro livro) {
-        String sql = "INSERT INTO livro (autor, titulo, editora, ano, ISBN, emprestado) VALUES (?, ?, ?, ?, ?, false)";
-
-        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+    public Livro adicionarLivro(Livro livro) {
+        String sql = "INSERT INTO livro (autor, titulo, editora, ano, emprestado, ISBN) VALUES (?, ?, ?, ?, ?, ?)";
+    
+        try (PreparedStatement stmt = conexao.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, livro.getAutor());
             stmt.setString(2, livro.getTitulo());
             stmt.setString(3, livro.getEditora());
             stmt.setInt(4, livro.getAno());
-            stmt.setString(5, livro.getISBN());
-            stmt.executeUpdate();
-            System.out.println("Livro cadastrado na biblioteca!");
+            stmt.setBoolean(5, livro.getEmprestado());
+            stmt.setString(6, livro.getISBN());
+    
+            int linhasAfetadas = stmt.executeUpdate();
+    
+            if (linhasAfetadas > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        livro.setIDLivro(generatedKeys.getInt(1)); 
+                        System.out.println("Livro cadastrado com sucesso! ID: " + livro.getIDLivro());
+                    }
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    
+        return livro;
     }
+    
 
     public List<Livro> listarLivros() {
         List<Livro> livros = new ArrayList<>();
@@ -42,6 +55,7 @@ public class LivroDAO {
 
             while (livroBD.next()) {
                 Livro livro = new Livro(
+                    livroBD.getInt("id"),
                     livroBD.getString("autor"),
                     livroBD.getString("titulo"),
                     livroBD.getString("editora"),
@@ -66,6 +80,7 @@ public class LivroDAO {
 
             while (livroDisponiveisBD.next()) {
                 Livro livroDisponivel = new Livro(
+                    livroDisponiveisBD.getInt("livro_id"),
                     livroDisponiveisBD.getString("autor"),
                     livroDisponiveisBD.getString("titulo"),
                     livroDisponiveisBD.getString("editora"),
@@ -90,6 +105,7 @@ public class LivroDAO {
 
             while (livroEmprestadoBD.next()) {
                 Livro livroEmprestado = new Livro(
+                    livroEmprestadoBD.getInt("livro_id"),
                     livroEmprestadoBD.getString("autor"),
                     livroEmprestadoBD.getString("titulo"),
                     livroEmprestadoBD.getString("editora"),

@@ -1,7 +1,7 @@
 package com;
 
 public class Livro {
-    private int livro_id;
+    private Integer livro_id;
     private String autor;
     private String titulo;
     private String editora;
@@ -9,7 +9,7 @@ public class Livro {
     private String ISBN;
     private Boolean emprestado;
 
-    public Livro(String autor, String titulo, String editora, int ano, Boolean emprestado, String ISBN) {
+    public Livro(String autor, String titulo, String editora, int ano, boolean emprestado, String ISBN) {
         this.autor = autor;
         this.titulo = titulo;
         this.editora = editora;
@@ -17,10 +17,20 @@ public class Livro {
         this.emprestado = emprestado;
         this.ISBN = ISBN;
     }
-    public int getIDLivro(){
+    
+    public Livro(Integer livro_id, String autor, String titulo, String editora, int ano, Boolean emprestado, String ISBN) {
+        this.livro_id = livro_id;
+        this.autor = autor;
+        this.titulo = titulo;
+        this.editora = editora;
+        this.ano = ano;
+        this.emprestado = emprestado;
+        this.ISBN = ISBN;
+    }
+    public Integer getIDLivro(){
         return livro_id;
     }
-    public void setIDLivro(int livro_id){
+    public void setIDLivro(Integer livro_id){
         this.livro_id = livro_id;
     }
     public String getAutor(){

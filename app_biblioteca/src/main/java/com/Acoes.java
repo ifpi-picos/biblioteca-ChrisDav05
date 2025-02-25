@@ -34,7 +34,7 @@ public class Acoes {
           System.out.println("Digite o ISBN do livro no formato XXXX-XXXX:");
           String ISBN = scanner.nextLine();
           Livro livro = new Livro(autor, titulo, editora, ano, false, ISBN);
-          livroDAO.adicionarLivro(livro);
+          livro = livroDAO.adicionarLivro(livro);
           
                
     }
@@ -61,7 +61,7 @@ public class Acoes {
         System.out.println("Digite o seu email no formato username@gmail.com:");
         String email = scanner.nextLine();
         Usuario usuario = new Usuario(nome, cpf, email);
-        usuarioDAO.cadastrarUsuario(usuario);
+        usuario = usuarioDAO.adicionarUsuario(usuario);
         
         System.out.println("\nUsuario cadastrado na biblioteca!");
         System.out.println("\nNome: " + usuario.getNome());
@@ -70,6 +70,7 @@ public class Acoes {
     }
 
     public void Emprestar(){
+
         System.out.println("Lista dos livros da biblioteca");
         System.out.println("\nDigite o título do livro que deseja tomar como emprestado:");
         String livroTitulo = scanner.nextLine();
@@ -95,6 +96,7 @@ public class Acoes {
     }
         LocalDate dataEmprestimo = LocalDate.now();
         LocalDate dataDevolucao = dataEmprestimo.plusDays(7);
+        String emprestado_status = "Emprestado";
         if(livroEncontrado!= null){
             int idEncontrado = livroDAO.buscaIdPorTitulo(livroTitulo);
             emprestimoDAO.atualizarStatus(true, idEncontrado);
@@ -102,7 +104,8 @@ public class Acoes {
             notificaçao.Notificar(usuarioEncontrado);
         }
         try {
-            emprestimoDAO.adicionarEmprestimo(livro_id, usuario_id, dataEmprestimo,dataDevolucao, "emprestado");
+            Emprestimo emprestimo = new Emprestimo(livroEncontrado, usuarioEncontrado, dataEmprestimo, dataDevolucao, emprestado_status);
+            emprestimoDAO.adicionarEmprestimo(emprestimo);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -112,28 +115,27 @@ public class Acoes {
     
     System.out.println("Digite seu ID de usuário:");
     int idUsuario = scanner.nextInt();
-
     Emprestimo emprestimoEncontrado = null;
     
     for (Emprestimo emprestimo : emprestimoDAO.listarEmprestimos()) {
-        if (idUsuario == emprestimo.getIDUsuario()) {  
+        Usuario usuario = emprestimo.getUsuario();
+        
+        if (usuario != null && idUsuario == usuario.getIDUsuario()) {
             emprestimoEncontrado = emprestimo;
             break;
         }
-    }
-
+    }    
     if (emprestimoEncontrado == null) {
         System.out.println("Nenhum empréstimo encontrado para este usuário.");
         return;
     }
-    
     System.out.println("Digite o ID do livro que deseja devolver: ");
     int idDevolve = scanner.nextInt();
 
     boolean encontrouLivro = false;
 
     for (Emprestimo emprestimo : emprestimoDAO.listarEmprestimos()) {
-        if (idUsuario == emprestimo.getIDUsuario() && idDevolve == emprestimo.getIDLivro()) {
+        if (idUsuario == emprestimo.getUsuario().getIDUsuario() && idDevolve == emprestimo.getLivro().getIDLivro()) {
             encontrouLivro = true;
             break;
         }

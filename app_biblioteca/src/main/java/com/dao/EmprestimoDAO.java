@@ -11,6 +11,7 @@ import java.util.List;
 
 import com.Emprestimo;
 import com.Livro;
+import com.Usuario;
 import com.example.ConexaoBanco;
 
 public class EmprestimoDAO {
@@ -24,14 +25,14 @@ public class EmprestimoDAO {
         this.usuarioDAO = new UsuarioDAO();
     }
 
-    public void adicionarEmprestimo(int livro_id, int usuario_id, LocalDate data_emprestimo, LocalDate data_devolucao, String emprestado_status) throws SQLException {
+    public void adicionarEmprestimo(Emprestimo emprestimo) throws SQLException {
         String sql = "INSERT INTO emprestimos (livro_id, usuario_id, data_emprestimo, data_devolucao, emprestado_status) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conexao.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            stmt.setInt(1, livro_id);
-            stmt.setInt(2, usuario_id);
-            stmt.setDate(3, Date.valueOf(data_emprestimo));
-            stmt.setDate(4, Date.valueOf(data_devolucao));
-            stmt.setString(5, emprestado_status);
+            stmt.setInt(1, emprestimo.getLivro().getIDLivro());
+            stmt.setInt(2, emprestimo.getUsuario().getIDUsuario());
+            stmt.setDate(3, Date.valueOf(emprestimo.getDataEmprestimo()));
+            stmt.setDate(4, Date.valueOf(emprestimo.getDataDevolucao()));
+            stmt.setString(5, emprestimo.getStatus());
 
             int linhasAfetadas = stmt.executeUpdate();
             if (linhasAfetadas > 0) {
@@ -60,33 +61,72 @@ public class EmprestimoDAO {
         }
     }
 
-    public List<Emprestimo> listarEmprestimos() {
-        List<Emprestimo> emprestimos = new ArrayList<>();
-        String sql = "SELECT * FROM emprestimos";
-
-        try (PreparedStatement stmt = conexao.prepareStatement(sql);
-             ResultSet emprestimoBD = stmt.executeQuery()) {
-
-            while (emprestimoBD.next()) {
-                Emprestimo emprestimo = new Emprestimo(
-                    emprestimoBD.getInt("livro_id"),
-                    emprestimoBD.getInt("usuario_id"),
-                    emprestimoBD.getDate("data_emprestimo").toLocalDate(),
-                    emprestimoBD.getString("emprestado_status")
-                );
-                emprestimos.add(emprestimo);
+    private Livro buscarLivroPorId(int id) {
+        String sql = "SELECT * FROM livro WHERE id = ?";
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new Livro(rs.getString("autor"), rs.getString("titulo"), rs.getString("editora"), rs.getInt("ano"), rs.getBoolean("emprestado"), rs.getString("ISBN"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return emprestimos;
+        return null;
     }
 
-    public void devolverLivro(int livro_id, String status)throws SQLException {
-        String sql = "UPDATE emprestimos SET emprestado_status = ? WHERE livro_id = ?";
+    private Usuario buscarUsuarioPorId(int id) {
+        String sql = "SELECT * FROM usuario WHERE id = ?";
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new Usuario(rs.getString("nome"), rs.getString("cpf"), rs.getString("email"));
+            }else{
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Emprestimo> listarEmprestimos() {
+    List<Emprestimo> emprestimos = new ArrayList<>();
+    String sql = "SELECT livro_id, usuario_id, data_emprestimo, data_devolucao, emprestado_status FROM emprestimos";
+    ;
+
+    try (PreparedStatement stmt = conexao.prepareStatement(sql);
+         ResultSet emprestimoBD = stmt.executeQuery()) {
+
+        while (emprestimoBD.next()) {
+            int livroId = emprestimoBD.getInt("livro_id");
+            int usuarioId = emprestimoBD.getInt("usuario_id");
+
+            Livro livro = buscarLivroPorId(livroId);
+            Usuario usuario = buscarUsuarioPorId(usuarioId);
+
+            Emprestimo emprestimo = new Emprestimo(
+                livro,
+                usuario,
+                emprestimoBD.getDate("data_emprestimo").toLocalDate(),
+                emprestimoBD.getDate("data_emprestimo").toLocalDate().plusDays(7),
+                emprestimoBD.getString("emprestado_status")
+            );
+
+            emprestimos.add(emprestimo);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return emprestimos;
+}
+
+    public void devolverLivro(int livro, String status)throws SQLException {
+        String sql = "UPDATE emprestimos SET emprestado_status = ? WHERE livro = ?";
         try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setString(1, status);
-            stmt.setInt(2, livro_id);
+            stmt.setInt(2, livro);
             int linhasAfetadas = stmt.executeUpdate();
             if (linhasAfetadas > 0) {
                 System.out.println("Status alterado!");
